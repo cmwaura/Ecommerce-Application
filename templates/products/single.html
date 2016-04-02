@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+<div class="page-header">
+  <h1>{{ product.title }}</h1>
+</div>
+
+{% block content %}
+
+
+<div class='row'>
+	<div class='col-sm-4'>
+	{% for img in images %}
+
+		{% if img.featured %}
+		<div class="col-xs-12">
+			<img class='img-responsive' src="{{ MEDIA_URL }}{{ img.image }}" />
+		<hr/>
+		</div>
+		{% endif %}
+			{% endfor %}
+	{% for img in images %}
+		{% if not img.featured %}
+		<div class="col-xs-6">
+	    <a href="#" class="thumbnail">
+	      <img class='img-responsive' src="{{ MEDIA_URL }}{{ img.image }}">
+	    </a>
+	  	</div>
+
+		{% endif %}
+								 
+	{% endfor %}
+	</div>
+	<div class='col-sm-8'>
+		<div class='col-sm-8 pull-left'>
+		 <h1>{{ product.title }}
+
+
+		 </h1>
+		</div>
+		<!--cart-->
+
+		<div class='col-sm-4 pull-right'>
+			<form class='form pull-right' method='POST' action='{% url "add_to_cart" product.slug %}'>{% csrf_token %}
+			<input class="btn btn-default btn-group-justified" button style="background-color:lightgrey" type='submit' value='Add to cart'/>
+			<input class="form-control" name='qty' type='number' value='1'/>
+			<!--<input class="form-control" name='attr' type='text' placeholder='color' />-->
+			<!--drop down menu in the color drop down above-->
+
+			<!--<select class="form-control"name="color">-->
+				<!--<option value="red">Red</option>-->
+				<!--<option value="blue" >Blue</option>-->
+				<!--<option value="green">Green</option>-->
+				<!--<option value="orange">Orange</option>-->
+				<!--<option value="black">Black</option>-->
+			<!--</select>-->
+
+				<!-- change in variations including size, color etc.//
+				drop down menu in single products besides item number -->
+			{% if product.variation_set.all %}
+
+				<!-- variation for size -->
+			{%  if product.variation_set.sizes %}
+			<select class="form-control"name="size">
+			{% for item in product.variation_set.sizes  %}
+				<option value='{{item.title|lower}}'>{{item.title|capfirst}}</option>
+			{% endfor %}
+			</select>
+			{% endif %}
+
+					<!-- variation for color -->
+			{%  if product.variation_set.color %}
+			<select class="form-control"name="color">
+			{% for item in product.variation_set.color  %}
+			<option value='{{item}}'>{{item.title|capfirst}}</option>
+			{% endfor %}
+			</select>
+			{% endif %}
+
+
+			{% endif %}
+			</form>
+		</div>
+
+		<div class='col-sm-12'>
+			<hr/>
+			 Price: {{ product.price }} <br/>
+			 Shipping: Free with $25+ purchase.
+			 <hr/>
+		</div>
+		<div class='col-sm-12'>
+			{{ product.description|linebreaks }}
+		</div>
+	</div>
+</div>
+{% endblock %}
